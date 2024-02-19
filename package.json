@@ -1,0 +1,23 @@
+{
+  "name": "url-shortener-api",
+  "version": "0.0.1",
+  "description": "API developed with TDD and Clean Architecture",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [   "clean architecture",
+  "clean code",
+  "tdd",
+  "design patterns",
+  "node",
+  "typescript",
+  "jest",
+  "typeorm"
+],
+  "author": {
+    "name": "Antonio marcos",
+    "email": "antoniomarcos.amrrds@gmail.com"
+  },
+  "license": "ISC"
+}
