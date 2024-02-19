@@ -6,18 +6,22 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [   "clean architecture",
-  "clean code",
-  "tdd",
-  "design patterns",
-  "node",
-  "typescript",
-  "jest",
-  "typeorm"
-],
+  "keywords": [
+    "clean architecture",
+    "clean code",
+    "tdd",
+    "design patterns",
+    "node",
+    "typescript",
+    "jest",
+    "typeorm"
+  ],
   "author": {
     "name": "Antonio marcos",
     "email": "antoniomarcos.amrrds@gmail.com"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "git-commit-msg-linter": "^5.0.6"
+  }
 }
