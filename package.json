@@ -4,13 +4,11 @@
   "description": "API developed with TDD and Clean Architecture",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.build.json"
   },
   "keywords": [
     "clean architecture",
-    "clean code",
     "tdd",
-    "design patterns",
     "node",
     "typescript",
     "jest",
@@ -22,6 +20,8 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "git-commit-msg-linter": "^5.0.6"
+    "@types/node": "^20.11.19",
+    "git-commit-msg-linter": "^5.0.6",
+    "typescript": "^5.3.3"
   }
 }
