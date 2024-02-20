@@ -25,11 +25,11 @@
     "jest",
     "typeorm"
   ],
+  "license": "GPL-3.0-or-later",
   "author": {
     "name": "Antonio marcos",
     "email": "antoniomarcos.amrrds@gmail.com"
   },
-  "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/module-alias": "^2.0.4",
