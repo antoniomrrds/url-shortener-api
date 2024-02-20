@@ -1,7 +1,7 @@
 {
   "name": "url-shortener-api",
   "version": "0.0.1",
-  "description": "API developed with TDD and Clean Architecture",
+  "description": "Rest Node.js API using TDD, clean architecture, and Typescript.",
   "main": "index.js",
   "scripts": {
     "clean": "npm prune",
