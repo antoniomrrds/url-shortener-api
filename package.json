@@ -4,6 +4,7 @@
   "description": "API developed with TDD and Clean Architecture",
   "main": "index.js",
   "scripts": {
+    "clean": "npm prune",
     "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.build.json",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix --max-warnings 0",
@@ -30,6 +31,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.12",
+    "@types/module-alias": "^2.0.4",
     "@types/node": "^20.11.19",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "eslint": "^8.56.0",
@@ -42,5 +44,8 @@
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "module-alias": "^2.2.3"
   }
 }
