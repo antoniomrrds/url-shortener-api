@@ -88,4 +88,14 @@ describe('CreateShortURL UseCase', () => {
 
     await expect(promise).rejects.toThrow(error)
   })
+  it('Should rethrow if ICreateShortUrlRepository throws', async () => {
+    const { sut, createShortUrlRepositoryMock } = makeSut()
+    const error = new Error('create_error')
+    jest.spyOn(createShortUrlRepositoryMock, 'create')
+      .mockImplementationOnce(() => { throw error })
+
+    const promise = sut.perform({ url })
+
+    await expect(promise).rejects.toThrow(error)
+  })
 })
