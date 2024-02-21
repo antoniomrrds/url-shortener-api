@@ -2,15 +2,18 @@ import { IUniqueIDGenerator } from '@/application/ports/crypto'
 import { ICreateShortUrlRepository } from '@/application/ports/repositories'
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 
-export class CreateShortUrl {
+type Input = ICreateShortUrlUseCase.Input
+type Output = ICreateShortUrlUseCase.Output
+
+export class CreateShortUrl implements ICreateShortUrlUseCase {
   constructor (
     private readonly crypto: IUniqueIDGenerator,
     private readonly createShortUrlRepo: ICreateShortUrlRepository
   ) { }
 
-  async perform ({ url }: ICreateShortUrlUseCase.Input): Promise<void> {
+  async perform ({ url }: Input): Promise<Output> {
     const shortUrl = this.crypto.generateUniqueId()
-    await this.createShortUrlRepo.create({
+    return await this.createShortUrlRepo.create({
       shortUrl,
       originalUrl: url,
       accessCounter: 0
