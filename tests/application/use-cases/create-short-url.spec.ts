@@ -42,7 +42,7 @@ const makeSut = (): SutTypes => {
   return { sut, uniqueIDGeneratorStub, createShortUrlRepositoryMock }
 }
 
-describe('CreateShortURL', () => {
+describe('CreateShortURL UseCase', () => {
   const url = 'any_url'
   const shortUrl = 'any_unique_id'
 
@@ -77,5 +77,15 @@ describe('CreateShortURL', () => {
       originalUrl: url,
       accessCounter: 0
     })
+  })
+  it('Should rethrow if IUniqueIDGenerator throws', async () => {
+    const { sut, uniqueIDGeneratorStub } = makeSut()
+    const error = new Error('unique_id_error')
+    jest.spyOn(uniqueIDGeneratorStub, 'generateUniqueId')
+      .mockImplementationOnce(() => { throw error })
+
+    const promise = sut.perform({ url })
+
+    await expect(promise).rejects.toThrow(error)
   })
 })
