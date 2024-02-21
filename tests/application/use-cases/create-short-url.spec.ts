@@ -12,24 +12,31 @@ class UniqueIDGeneratorStub implements IUniqueIDGenerator {
   }
 }
 
-class CreateShortUrlRepositoryMock implements ICreateShortUrlRepository {
+class CreateShortUrlRepositorySpy implements ICreateShortUrlRepository {
   input?: ICreateShortUrlRepository.Input
   callsCount = 0
+  output = {
+    id: 'any_id',
+    shortUrl: 'any_unique_id',
+    originalUrl: 'any_url',
+    accessCounter: 0
+  }
 
-  async create (input: ICreateShortUrlRepository.Input): Promise<void> {
+  async create (input: ICreateShortUrlRepository.Input): Promise<ICreateShortUrlRepository.Output> {
     this.callsCount++
     this.input = input
+    return this.output
   }
 }
 
 type SutTypes = {
   sut: CreateShortUrl
   uniqueIDGeneratorStub: UniqueIDGeneratorStub
-  createShortUrlRepositoryMock: CreateShortUrlRepositoryMock
+  createShortUrlRepositoryMock: CreateShortUrlRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const createShortUrlRepositoryMock = new CreateShortUrlRepositoryMock()
+  const createShortUrlRepositoryMock = new CreateShortUrlRepositorySpy()
   const uniqueIDGeneratorStub = new UniqueIDGeneratorStub()
   const sut = new CreateShortUrl(uniqueIDGeneratorStub, createShortUrlRepositoryMock)
   return { sut, uniqueIDGeneratorStub, createShortUrlRepositoryMock }
@@ -37,13 +44,14 @@ const makeSut = (): SutTypes => {
 
 describe('CreateShortURL', () => {
   const url = 'any_url'
+  const shortUrl = 'any_unique_id'
 
   it('Should call generateUniqueId method of IUniqueIDGenerator when perform is invoked', async () => {
     const { sut, uniqueIDGeneratorStub } = makeSut()
 
     await sut.perform({ url })
 
-    expect(uniqueIDGeneratorStub.output).toBe('any_unique_id')
+    expect(uniqueIDGeneratorStub.output).toBe(shortUrl)
     expect(uniqueIDGeneratorStub.callsCount).toBe(1)
   })
   it('Should call create method of ICreateShortUrlRepository with correct values', async () => {
@@ -52,10 +60,22 @@ describe('CreateShortURL', () => {
     await sut.perform({ url })
 
     expect(createShortUrlRepositoryMock.input).toEqual({
-      shortUrl: 'any_unique_id',
+      shortUrl,
       originalUrl: url,
       accessCounter: 0
     })
     expect(createShortUrlRepositoryMock.callsCount).toBe(1)
+  })
+  it('Should return data successfully', async () => {
+    const { sut } = makeSut()
+
+    const data = await sut.perform({ url })
+
+    expect(data).toEqual({
+      id: 'any_id',
+      shortUrl,
+      originalUrl: url,
+      accessCounter: 0
+    })
   })
 })
