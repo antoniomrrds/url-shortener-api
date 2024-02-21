@@ -11,7 +11,7 @@
 1. ⛔️ Recebe uma requisição do tipo **POST** na rota **/api/url**.
 2. ⛔️ Valida se o campo obrigatório **originalUrl** está presente na requisição.
 3. ⛔️ Verifica se o campo **originalUrl** é uma URL válida.
-4. ⛔️ Gera uma chave única para o campo **shortUrl**.
+4. ✅ Gera uma chave única para o campo **shortUrl**.
 5. ⛔️ Cria a URL encurtada utilizando os dados fornecidos e os dados internos.
 6. ⛔️ Retorna **200 OK** com os dados da URL encurtada.
 
