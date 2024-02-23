@@ -3,7 +3,7 @@ import { IUniqueIDGenerator } from '@/application/ports/crypto'
 import { ICreateShortUrlRepository } from '@/application/ports/repositories'
 
 class UniqueIDGeneratorStub implements IUniqueIDGenerator {
-  public output = 'any_unique_id'
+  output = 'any_unique_id'
   callsCount = 0
 
   generateUniqueId (): IUniqueIDGenerator.Output {
@@ -32,14 +32,14 @@ class CreateShortUrlRepositorySpy implements ICreateShortUrlRepository {
 type SutTypes = {
   sut: CreateShortUrl
   uniqueIDGeneratorStub: UniqueIDGeneratorStub
-  createShortUrlRepositoryMock: CreateShortUrlRepositorySpy
+  createShortUrlRepositorySpy: CreateShortUrlRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const createShortUrlRepositoryMock = new CreateShortUrlRepositorySpy()
+  const createShortUrlRepositorySpy = new CreateShortUrlRepositorySpy()
   const uniqueIDGeneratorStub = new UniqueIDGeneratorStub()
-  const sut = new CreateShortUrl(uniqueIDGeneratorStub, createShortUrlRepositoryMock)
-  return { sut, uniqueIDGeneratorStub, createShortUrlRepositoryMock }
+  const sut = new CreateShortUrl(uniqueIDGeneratorStub, createShortUrlRepositorySpy)
+  return { sut, uniqueIDGeneratorStub, createShortUrlRepositorySpy }
 }
 
 describe('CreateShortURL UseCase', () => {
@@ -55,16 +55,16 @@ describe('CreateShortURL UseCase', () => {
     expect(uniqueIDGeneratorStub.callsCount).toBe(1)
   })
   it('Should call create method of ICreateShortUrlRepository with correct values', async () => {
-    const { sut, createShortUrlRepositoryMock } = makeSut()
+    const { sut, createShortUrlRepositorySpy } = makeSut()
 
     await sut.perform({ url })
 
-    expect(createShortUrlRepositoryMock.input).toEqual({
+    expect(createShortUrlRepositorySpy.input).toEqual({
       shortUrl,
       originalUrl: url,
       accessCounter: 0
     })
-    expect(createShortUrlRepositoryMock.callsCount).toBe(1)
+    expect(createShortUrlRepositorySpy.callsCount).toBe(1)
   })
   it('Should return data successfully', async () => {
     const { sut } = makeSut()
@@ -89,9 +89,9 @@ describe('CreateShortURL UseCase', () => {
     await expect(promise).rejects.toThrow(error)
   })
   it('Should rethrow if ICreateShortUrlRepository throws', async () => {
-    const { sut, createShortUrlRepositoryMock } = makeSut()
+    const { sut, createShortUrlRepositorySpy } = makeSut()
     const error = new Error('create_error')
-    jest.spyOn(createShortUrlRepositoryMock, 'create')
+    jest.spyOn(createShortUrlRepositorySpy, 'create')
       .mockImplementationOnce(() => { throw error })
 
     const promise = sut.perform({ url })
