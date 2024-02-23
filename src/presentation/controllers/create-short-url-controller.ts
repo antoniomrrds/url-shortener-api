@@ -20,7 +20,6 @@ export class CreateShortUrlController {
           data: new Error('The field originalUrl is required.')
         }
       }
-
       const isValid = this.urlValidator.isValid(originalUrl)
       if (!isValid) {
         return {
@@ -28,7 +27,11 @@ export class CreateShortUrlController {
           data: new Error('The field originalUrl must be a valid URL.')
         }
       }
-      await this.createShortUrl.perform({ originalUrl })
+      const result = await this.createShortUrl.perform({ originalUrl })
+      return {
+        statusCode: 201,
+        data: result
+      }
     } catch (error) {
       return {
         statusCode: 500,
