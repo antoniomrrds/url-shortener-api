@@ -1,4 +1,5 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
+import { InvalidParamError, MissingParamError, ServerError } from '@/presentation/errors'
 import { HttpResponse } from '@/presentation/ports'
 import { IUrlValidator } from '@/presentation/validation/ports'
 
@@ -17,14 +18,14 @@ export class CreateShortUrlController {
       if (originalUrl === undefined || originalUrl === '' || originalUrl === null) {
         return {
           statusCode: 400,
-          data: new Error('The field originalUrl is required.')
+          data: new MissingParamError('originalUrl')
         }
       }
       const isValid = this.urlValidator.isValid(originalUrl)
       if (!isValid) {
         return {
           statusCode: 400,
-          data: new Error('The field originalUrl must be a valid URL.')
+          data: new InvalidParamError('originalUrl')
         }
       }
       const result = await this.createShortUrl.perform({ originalUrl })
@@ -35,7 +36,7 @@ export class CreateShortUrlController {
     } catch (error) {
       return {
         statusCode: 500,
-        data: new Error()
+        data: new ServerError()
       }
     }
   }
