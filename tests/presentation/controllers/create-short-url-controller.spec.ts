@@ -1,8 +1,12 @@
 import { CreateShortUrlController } from '@/presentation/controllers'
 
+const makeSut = (): CreateShortUrlController => {
+  return new CreateShortUrlController()
+}
+
 describe('CreateShortUrlController', () => {
   it('Should return 400 if originalUrl field is empty', async () => {
-    const sut = new CreateShortUrlController()
+    const sut = makeSut()
 
     const httpResponse = await sut.handleRequest({ originalUrl: '' })
 
@@ -12,7 +16,7 @@ describe('CreateShortUrlController', () => {
     })
   })
   it('Should return 400 if originalUrl field is undefined', async () => {
-    const sut = new CreateShortUrlController()
+    const sut = makeSut()
 
     const httpResponse = await sut.handleRequest({ originalUrl: undefined })
 
@@ -22,7 +26,7 @@ describe('CreateShortUrlController', () => {
     })
   })
   it('Should return 400 if originalUrl field is null', async () => {
-    const sut = new CreateShortUrlController()
+    const sut = makeSut()
 
     const httpResponse = await sut.handleRequest({ originalUrl: null })
 
