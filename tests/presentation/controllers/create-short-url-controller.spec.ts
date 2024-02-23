@@ -27,7 +27,7 @@ class CreateShortUrlSpy implements ICreateShortUrlUseCase {
   async perform (input: ICreateShortUrlUseCase.Input): Promise<ICreateShortUrlUseCase.Output > {
     this.input = input
     this.callsCount++
-    return this.output as ICreateShortUrlUseCase.Output
+    return this.output
   }
 }
 
@@ -128,6 +128,21 @@ describe('CreateShortUrlController', () => {
     expect(httpResponse).toEqual({
       statusCode: 500,
       data: new Error()
+    })
+  })
+  it('Should return 201 and the data', async () => {
+    const { sut } = makeSut()
+
+    const httpResponse = await sut.handleRequest({ originalUrl })
+
+    expect(httpResponse).toEqual({
+      statusCode: 201,
+      data: {
+        id: 'any_id',
+        shortUrl: 'any_unique_id',
+        originalUrl: 'any_url',
+        accessCounter: 0
+      }
     })
   })
 })
