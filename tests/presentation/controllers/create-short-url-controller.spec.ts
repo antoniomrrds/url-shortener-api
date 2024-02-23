@@ -3,8 +3,12 @@ import { IUrlValidator } from '@/presentation/validation/ports'
 
 class UrlValidatorStub implements IUrlValidator {
   output: boolean = true
+  input?: string
+  callsCount = 0
 
   isValid (url: string): boolean {
+    this.input = url
+    this.callsCount++
     return this.output
   }
 }
@@ -64,5 +68,13 @@ describe('CreateShortUrlController', () => {
       statusCode: 400,
       data: new Error('The field originalUrl must be a valid URL.')
     })
+  })
+  it('Should call UrlValidator with the correct url', async () => {
+    const { sut, urlValidatorStub } = makeSut()
+
+    await sut.handleRequest({ originalUrl: 'any-url' })
+
+    expect(urlValidatorStub.input).toBe('any-url')
+    expect(urlValidatorStub.callsCount).toBe(1)
   })
 })
