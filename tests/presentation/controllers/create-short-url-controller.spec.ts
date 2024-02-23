@@ -17,10 +17,10 @@ class UrlValidatorSpy implements IUrlValidator {
 class CreateShortUrlSpy implements ICreateShortUrlUseCase {
   input?: ICreateShortUrlUseCase.Input
   callsCount = 0
-  output?: {
-    id: 'any_id'
-    shortUrl: 'any_unique_id'
-    originalUrl: 'any_url'
+  output = {
+    id: 'any_id',
+    shortUrl: 'any_unique_id',
+    originalUrl: 'any_url',
     accessCounter: 0
   }
 
@@ -118,5 +118,16 @@ describe('CreateShortUrlController', () => {
 
     expect(createShortUrlSpy.input).toEqual({ originalUrl })
     expect(createShortUrlSpy.callsCount).toBe(1)
+  })
+  it('Should return 500 if CreateShortUrl throws', async () => {
+    const { sut, createShortUrlSpy } = makeSut()
+    createShortUrlSpy.perform = () => { throw new Error() }
+
+    const httpResponse = await sut.handleRequest({ originalUrl })
+
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      data: new Error()
+    })
   })
 })
