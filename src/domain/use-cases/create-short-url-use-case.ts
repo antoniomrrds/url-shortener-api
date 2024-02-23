@@ -6,7 +6,7 @@ export interface ICreateShortUrlUseCase {
 
 export namespace ICreateShortUrlUseCase {
   export type Input = {
-    url: string
+    originalUrl: string
   }
-  export type Output = Omit<UrlEntity, 'id'>
+  export type Output = UrlEntity
 }

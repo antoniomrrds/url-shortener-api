@@ -5,7 +5,7 @@ export interface ICreateShortUrlRepository {
 }
 
 export namespace ICreateShortUrlRepository {
-  export type Input = ICreateShortUrlUseCase.Output
+  export type Input = Omit<ICreateShortUrlUseCase.Output, 'id'>
   export type Output = {
     id: string
     shortUrl: string

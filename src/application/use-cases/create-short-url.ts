@@ -11,11 +11,11 @@ export class CreateShortUrl implements ICreateShortUrlUseCase {
     private readonly createShortUrlRepo: ICreateShortUrlRepository
   ) { }
 
-  async perform ({ url }: Input): Promise<Output> {
+  async perform ({ originalUrl }: Input): Promise<Output> {
     const shortUrl = this.crypto.generateUniqueId()
     return await this.createShortUrlRepo.create({
       shortUrl,
-      originalUrl: url,
+      originalUrl,
       accessCounter: 0
     })
   }

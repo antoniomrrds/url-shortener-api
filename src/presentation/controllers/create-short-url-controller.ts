@@ -1,3 +1,4 @@
+import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { HttpResponse } from '@/presentation/ports'
 import { IUrlValidator } from '@/presentation/validation/ports'
 
@@ -6,7 +7,10 @@ type HttpRequest = {
 }
 
 export class CreateShortUrlController {
-  constructor (private readonly urlValidator: IUrlValidator) {}
+  constructor (
+    private readonly urlValidator: IUrlValidator,
+    private readonly createShortUrl: ICreateShortUrlUseCase
+  ) {}
 
   async handleRequest ({ originalUrl }: HttpRequest): Promise<HttpResponse | undefined> {
     try {
@@ -24,6 +28,7 @@ export class CreateShortUrlController {
           data: new Error('The field originalUrl must be a valid URL.')
         }
       }
+      await this.createShortUrl.perform({ originalUrl })
     } catch (error) {
       return {
         statusCode: 500,
