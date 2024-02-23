@@ -1,5 +1,6 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { CreateShortUrlController } from '@/presentation/controllers'
+import { InvalidParamError, MissingParamError, ServerError } from '@/presentation/errors'
 import { IUrlValidator } from '@/presentation/validation/ports'
 
 class UrlValidatorSpy implements IUrlValidator {
@@ -58,7 +59,7 @@ describe('CreateShortUrlController', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      data: new Error('The field originalUrl is required.')
+      data: new MissingParamError('originalUrl')
     })
   })
   it('Should return 400 if originalUrl field is undefined', async () => {
@@ -68,7 +69,7 @@ describe('CreateShortUrlController', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      data: new Error('The field originalUrl is required.')
+      data: new MissingParamError('originalUrl')
     })
   })
   it('Should return 400 if originalUrl field is null', async () => {
@@ -78,7 +79,7 @@ describe('CreateShortUrlController', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      data: new Error('The field originalUrl is required.')
+      data: new MissingParamError('originalUrl')
     })
   })
   it('Should return 400 if the originalUrl field is not a URL', async () => {
@@ -89,7 +90,7 @@ describe('CreateShortUrlController', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      data: new Error('The field originalUrl must be a valid URL.')
+      data: new InvalidParamError('originalUrl')
     })
   })
   it('Should call UrlValidator with the correct url', async () => {
@@ -108,7 +109,7 @@ describe('CreateShortUrlController', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 500,
-      data: new Error()
+      data: new ServerError()
     })
   })
   it('Should call CreateShortUrl with the correct value', async () => {
@@ -127,7 +128,7 @@ describe('CreateShortUrlController', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 500,
-      data: new Error()
+      data: new ServerError()
     })
   })
   it('Should return 201 and the data', async () => {
