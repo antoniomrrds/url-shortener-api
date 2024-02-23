@@ -77,4 +77,15 @@ describe('CreateShortUrlController', () => {
     expect(urlValidatorStub.input).toBe('any-url')
     expect(urlValidatorStub.callsCount).toBe(1)
   })
+  it('Should return 500 if UrlValidator throws', async () => {
+    const { sut, urlValidatorStub } = makeSut()
+    urlValidatorStub.isValid = () => { throw new Error() }
+
+    const httpResponse = await sut.handleRequest({ originalUrl: 'any-url' })
+
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      data: new Error()
+    })
+  })
 })
