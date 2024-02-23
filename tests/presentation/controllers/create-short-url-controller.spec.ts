@@ -1,7 +1,8 @@
+import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { CreateShortUrlController } from '@/presentation/controllers'
 import { IUrlValidator } from '@/presentation/validation/ports'
 
-class UrlValidatorStub implements IUrlValidator {
+class UrlValidatorSpy implements IUrlValidator {
   output: boolean = true
   input?: string
   callsCount = 0
@@ -13,21 +14,43 @@ class UrlValidatorStub implements IUrlValidator {
   }
 }
 
+class CreateShortUrlSpy implements ICreateShortUrlUseCase {
+  input?: ICreateShortUrlUseCase.Input
+  callsCount = 0
+  output?: {
+    id: 'any_id'
+    shortUrl: 'any_unique_id'
+    originalUrl: 'any_url'
+    accessCounter: 0
+  }
+
+  async perform (input: ICreateShortUrlUseCase.Input): Promise<ICreateShortUrlUseCase.Output > {
+    this.input = input
+    this.callsCount++
+    return this.output as ICreateShortUrlUseCase.Output
+  }
+}
+
 type SutTypes = {
   sut: CreateShortUrlController
-  urlValidatorStub: UrlValidatorStub
+  urlValidatorSpy: UrlValidatorSpy
+  createShortUrlSpy: CreateShortUrlSpy
 }
 
 const makeSut = (): SutTypes => {
-  const urlValidatorStub = new UrlValidatorStub()
-  const sut = new CreateShortUrlController(urlValidatorStub)
+  const createShortUrlSpy = new CreateShortUrlSpy()
+  const urlValidatorSpy = new UrlValidatorSpy()
+  const sut = new CreateShortUrlController(urlValidatorSpy, createShortUrlSpy)
   return {
     sut,
-    urlValidatorStub
+    urlValidatorSpy,
+    createShortUrlSpy
   }
 }
 
 describe('CreateShortUrlController', () => {
+  const originalUrl = 'http://any-url.com'
+
   it('Should return 400 if originalUrl field is empty', async () => {
     const { sut } = makeSut()
 
@@ -59,10 +82,10 @@ describe('CreateShortUrlController', () => {
     })
   })
   it('Should return 400 if the originalUrl field is not a URL', async () => {
-    const { sut, urlValidatorStub } = makeSut()
-    urlValidatorStub.output = false
+    const { sut, urlValidatorSpy } = makeSut()
+    urlValidatorSpy.output = false
 
-    const httpResponse = await sut.handleRequest({ originalUrl: 'invalid-url' })
+    const httpResponse = await sut.handleRequest({ originalUrl: 'invalid_url' })
 
     expect(httpResponse).toEqual({
       statusCode: 400,
@@ -70,22 +93,30 @@ describe('CreateShortUrlController', () => {
     })
   })
   it('Should call UrlValidator with the correct url', async () => {
-    const { sut, urlValidatorStub } = makeSut()
+    const { sut, urlValidatorSpy } = makeSut()
 
-    await sut.handleRequest({ originalUrl: 'any-url' })
+    await sut.handleRequest({ originalUrl })
 
-    expect(urlValidatorStub.input).toBe('any-url')
-    expect(urlValidatorStub.callsCount).toBe(1)
+    expect(urlValidatorSpy.input).toBe(originalUrl)
+    expect(urlValidatorSpy.callsCount).toBe(1)
   })
   it('Should return 500 if UrlValidator throws', async () => {
-    const { sut, urlValidatorStub } = makeSut()
-    urlValidatorStub.isValid = () => { throw new Error() }
+    const { sut, urlValidatorSpy } = makeSut()
+    urlValidatorSpy.isValid = () => { throw new Error() }
 
-    const httpResponse = await sut.handleRequest({ originalUrl: 'any-url' })
+    const httpResponse = await sut.handleRequest({ originalUrl })
 
     expect(httpResponse).toEqual({
       statusCode: 500,
       data: new Error()
     })
+  })
+  it('Should call CreateShortUrl with the correct value', async () => {
+    const { sut, createShortUrlSpy } = makeSut()
+
+    await sut.handleRequest({ originalUrl })
+
+    expect(createShortUrlSpy.input).toEqual({ originalUrl })
+    expect(createShortUrlSpy.callsCount).toBe(1)
   })
 })

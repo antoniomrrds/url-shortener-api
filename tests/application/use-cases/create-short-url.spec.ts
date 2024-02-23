@@ -43,13 +43,13 @@ const makeSut = (): SutTypes => {
 }
 
 describe('CreateShortURL UseCase', () => {
-  const url = 'any_url'
+  const originalUrl = 'any_url'
   const shortUrl = 'any_unique_id'
 
   it('Should call generateUniqueId method of IUniqueIDGenerator when perform is invoked', async () => {
     const { sut, uniqueIDGeneratorStub } = makeSut()
 
-    await sut.perform({ url })
+    await sut.perform({ originalUrl })
 
     expect(uniqueIDGeneratorStub.output).toBe(shortUrl)
     expect(uniqueIDGeneratorStub.callsCount).toBe(1)
@@ -57,11 +57,11 @@ describe('CreateShortURL UseCase', () => {
   it('Should call create method of ICreateShortUrlRepository with correct values', async () => {
     const { sut, createShortUrlRepositorySpy } = makeSut()
 
-    await sut.perform({ url })
+    await sut.perform({ originalUrl })
 
     expect(createShortUrlRepositorySpy.input).toEqual({
       shortUrl,
-      originalUrl: url,
+      originalUrl,
       accessCounter: 0
     })
     expect(createShortUrlRepositorySpy.callsCount).toBe(1)
@@ -69,12 +69,12 @@ describe('CreateShortURL UseCase', () => {
   it('Should return data successfully', async () => {
     const { sut } = makeSut()
 
-    const data = await sut.perform({ url })
+    const data = await sut.perform({ originalUrl })
 
     expect(data).toEqual({
       id: 'any_id',
       shortUrl,
-      originalUrl: url,
+      originalUrl,
       accessCounter: 0
     })
   })
@@ -84,7 +84,7 @@ describe('CreateShortURL UseCase', () => {
     jest.spyOn(uniqueIDGeneratorStub, 'generateUniqueId')
       .mockImplementationOnce(() => { throw error })
 
-    const promise = sut.perform({ url })
+    const promise = sut.perform({ originalUrl })
 
     await expect(promise).rejects.toThrow(error)
   })
@@ -94,7 +94,7 @@ describe('CreateShortURL UseCase', () => {
     jest.spyOn(createShortUrlRepositorySpy, 'create')
       .mockImplementationOnce(() => { throw error })
 
-    const promise = sut.perform({ url })
+    const promise = sut.perform({ originalUrl })
 
     await expect(promise).rejects.toThrow(error)
   })
