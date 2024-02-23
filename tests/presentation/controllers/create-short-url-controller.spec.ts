@@ -102,14 +102,15 @@ describe('CreateShortUrlController', () => {
     expect(urlValidatorSpy.callsCount).toBe(1)
   })
   it('Should return 500 if UrlValidator throws', async () => {
+    const error = new Error('url_validator_error')
     const { sut, urlValidatorSpy } = makeSut()
-    urlValidatorSpy.isValid = () => { throw new Error() }
+    urlValidatorSpy.isValid = () => { throw error }
 
     const httpResponse = await sut.handleRequest({ originalUrl })
 
     expect(httpResponse).toEqual({
       statusCode: 500,
-      data: new ServerError()
+      data: new ServerError(error)
     })
   })
   it('Should call CreateShortUrl with the correct value', async () => {
@@ -121,6 +122,7 @@ describe('CreateShortUrlController', () => {
     expect(createShortUrlSpy.callsCount).toBe(1)
   })
   it('Should return 500 if CreateShortUrl throws', async () => {
+    const error = new Error('perform_error')
     const { sut, createShortUrlSpy } = makeSut()
     createShortUrlSpy.perform = () => { throw new Error() }
 
@@ -128,7 +130,7 @@ describe('CreateShortUrlController', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 500,
-      data: new ServerError()
+      data: new ServerError(error)
     })
   })
   it('Should return 201 and the data', async () => {
