@@ -1,10 +1,10 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { CreateShortUrlController } from '@/presentation/controllers'
 import { InvalidParamError, ServerError } from '@/presentation/errors'
-import { RequiredFieldValidation } from '@/presentation/validation'
+import { RequiredFieldValidation, ValidationComposite } from '@/presentation/validation'
 import { IUrlValidator } from '@/presentation/validation/ports'
 
-jest.mock('@/presentation/validation/required-field-validation')
+jest.mock('@/presentation/validation/validation-composite')
 
 class UrlValidatorSpy implements IUrlValidator {
   output: boolean = true
@@ -59,12 +59,14 @@ describe('CreateShortUrlController', () => {
   it('Should return 400 if validation fails', async () => {
     const error = new Error('validation_error')
     const { sut } = makeSut()
-    const requiredFieldValidationSpy = RequiredFieldValidation as jest.Mock
-    requiredFieldValidationSpy.mockImplementationOnce(() => ({ validate: () => error }))
+    const validationCompositeSpy = ValidationComposite as jest.Mock
+    validationCompositeSpy.mockImplementationOnce(() => ({ validate: () => error }))
 
     const httpResponse = await sut.handleRequest({ originalUrl })
 
-    expect(requiredFieldValidationSpy).toHaveBeenCalledWith(originalUrl, 'originalUrl')
+    expect(ValidationComposite).toHaveBeenCalledWith([
+      new RequiredFieldValidation(originalUrl, 'originalUrl')
+    ])
     expect(httpResponse).toEqual({
       statusCode: 400,
       data: error
