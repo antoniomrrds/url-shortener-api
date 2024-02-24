@@ -1,7 +1,10 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { CreateShortUrlController } from '@/presentation/controllers'
-import { InvalidParamError, MissingParamError, ServerError } from '@/presentation/errors'
+import { InvalidParamError, ServerError } from '@/presentation/errors'
+import { RequiredFieldValidation } from '@/presentation/validation'
 import { IUrlValidator } from '@/presentation/validation/ports'
+
+jest.mock('@/presentation/validation/required-field-validation')
 
 class UrlValidatorSpy implements IUrlValidator {
   output: boolean = true
@@ -36,6 +39,7 @@ type SutTypes = {
   sut: CreateShortUrlController
   urlValidatorSpy: UrlValidatorSpy
   createShortUrlSpy: CreateShortUrlSpy
+
 }
 
 const makeSut = (): SutTypes => {
@@ -52,34 +56,18 @@ const makeSut = (): SutTypes => {
 describe('CreateShortUrlController', () => {
   const originalUrl = 'http://any-url.com'
 
-  it('Should return 400 if originalUrl field is empty', async () => {
+  it('Should return 400 if validation fails', async () => {
+    const error = new Error('validation_error')
     const { sut } = makeSut()
+    const requiredFieldValidationSpy = RequiredFieldValidation as jest.Mock
+    requiredFieldValidationSpy.mockImplementationOnce(() => ({ validate: () => error }))
 
-    const httpResponse = await sut.handleRequest({ originalUrl: '' })
+    const httpResponse = await sut.handleRequest({ originalUrl })
 
+    expect(requiredFieldValidationSpy).toHaveBeenCalledWith(originalUrl, 'originalUrl')
     expect(httpResponse).toEqual({
       statusCode: 400,
-      data: new MissingParamError('originalUrl')
-    })
-  })
-  it('Should return 400 if originalUrl field is undefined', async () => {
-    const { sut } = makeSut()
-
-    const httpResponse = await sut.handleRequest({ originalUrl: undefined as any })
-
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      data: new MissingParamError('originalUrl')
-    })
-  })
-  it('Should return 400 if originalUrl field is null', async () => {
-    const { sut } = makeSut()
-
-    const httpResponse = await sut.handleRequest({ originalUrl: null as any })
-
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      data: new MissingParamError('originalUrl')
+      data: error
     })
   })
   it('Should return 400 if the originalUrl field is not a URL', async () => {
