@@ -1,3 +1,3 @@
 export * from './ports'
-export * from './composite'
+export * from './validation-composite'
 export * from './required-field-validation'
