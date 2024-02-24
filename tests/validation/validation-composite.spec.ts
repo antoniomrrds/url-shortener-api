@@ -40,4 +40,12 @@ describe('ValidationComposite', () => {
 
     expect(error).toEqual(new Error('First_error'))
   })
+  it('Should return an error if any Validator fails', () => {
+    const { sut, validatorSpy } = makeSut()
+    validatorSpy[1].error = new Error('Second_error')
+
+    const error = sut.validate()
+
+    expect(error).toEqual(new Error('Second_error'))
+  })
 })
