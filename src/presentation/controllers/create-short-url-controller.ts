@@ -1,7 +1,7 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { InvalidParamError, MissingParamError } from '@/presentation/errors'
 import { badRequest, created, serverError } from '@/presentation/helpers'
-import { IUrlValidator } from '@/presentation/validation/ports'
+import { IUrlValidator } from '@/presentation/validation'
 import { HttpResponse } from '@/presentation/ports'
 
 type CreateShortUrlRequest = {
