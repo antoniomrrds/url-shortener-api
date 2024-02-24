@@ -1,7 +1,7 @@
 import { ValidationComposite, IValidator } from '@/presentation/validation'
 
 class ValidatorSpy implements IValidator {
-  error?: Error
+  error?: Error = undefined
   validate (): undefined | Error {
     return this.error
   }
@@ -9,7 +9,8 @@ class ValidatorSpy implements IValidator {
 
 type SutTypes = {
   sut: ValidationComposite
-  validatorSpy: IValidator[] }
+  validatorSpy: ValidatorSpy[]
+}
 
 const makeSut = (): SutTypes => {
   const validators: IValidator[] = []
@@ -26,9 +27,17 @@ describe('ValidationComposite', () => {
   it('Should return undefined if all Validators return undefined', () => {
     const { sut } = makeSut()
 
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
     const error = sut.validate()
 
     expect(error).toBeUndefined()
+  })
+  it('Should return the first error if more than one Validator fails', () => {
+    const { sut, validatorSpy } = makeSut()
+    validatorSpy[0].error = new Error('First_error')
+    validatorSpy[1].error = new Error('Second_error')
+
+    const error = sut.validate()
+
+    expect(error).toEqual(new Error('First_error'))
   })
 })
