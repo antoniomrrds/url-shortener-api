@@ -1,7 +1,7 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
-import { InvalidParamError, MissingParamError } from '@/presentation/errors'
+import { InvalidParamError } from '@/presentation/errors'
 import { badRequest, created, serverError } from '@/presentation/helpers'
-import { IUrlValidator } from '@/presentation/validation'
+import { IUrlValidator, RequiredFieldValidation } from '@/presentation/validation'
 import { HttpResponse } from '@/presentation/ports'
 
 type CreateShortUrlRequest = {
@@ -25,7 +25,7 @@ export class CreateShortUrlController {
     try {
       const error = this.validateRequest({ originalUrl })
       if (error !== undefined) {
-        return badRequest(new MissingParamError('originalUrl'))
+        return badRequest(error)
       }
 
       const isValid = this.urlValidator.isValid(originalUrl)
@@ -40,8 +40,7 @@ export class CreateShortUrlController {
   }
 
   private validateRequest ({ originalUrl }: CreateShortUrlRequest): Error | undefined {
-    if (originalUrl === undefined || originalUrl === '' || originalUrl === null) {
-      return new MissingParamError('originalUrl')
-    }
+    const validator = new RequiredFieldValidation(originalUrl, 'originalUrl')
+    return validator.validate()
   }
 }
