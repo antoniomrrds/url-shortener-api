@@ -1,12 +1,19 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { InvalidParamError, MissingParamError } from '@/presentation/errors'
 import { badRequest, created, serverError } from '@/presentation/helpers'
-import { HttpResponse } from '@/presentation/ports'
 import { IUrlValidator } from '@/presentation/validation/ports'
+import { HttpResponse } from '@/presentation/ports'
 
-type HttpRequest = {
+type CreateShortUrlRequest = {
   originalUrl: string
 }
+
+type CreateShortUrlResponse = {
+  id: string
+  shortUrl: string
+  originalUrl: string
+  accessCounter: number
+} | Error
 
 export class CreateShortUrlController {
   constructor (
@@ -14,11 +21,13 @@ export class CreateShortUrlController {
     private readonly createShortUrl: ICreateShortUrlUseCase
   ) {}
 
-  async handleRequest ({ originalUrl }: HttpRequest): Promise<HttpResponse> {
+  async handleRequest ({ originalUrl }: CreateShortUrlRequest): Promise<HttpResponse<CreateShortUrlResponse>> {
     try {
-      if (originalUrl === undefined || originalUrl === '' || originalUrl === null) {
+      const error = this.validateRequest({ originalUrl })
+      if (error !== undefined) {
         return badRequest(new MissingParamError('originalUrl'))
       }
+
       const isValid = this.urlValidator.isValid(originalUrl)
       if (!isValid) {
         return badRequest(new InvalidParamError('originalUrl'))
@@ -27,6 +36,12 @@ export class CreateShortUrlController {
       return created(result)
     } catch (error) {
       return serverError(error)
+    }
+  }
+
+  private validateRequest ({ originalUrl }: CreateShortUrlRequest): Error | undefined {
+    if (originalUrl === undefined || originalUrl === '' || originalUrl === null) {
+      return new MissingParamError('originalUrl')
     }
   }
 }
