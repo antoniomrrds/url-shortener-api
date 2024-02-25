@@ -1,37 +1,14 @@
-import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { Controller, CreateShortUrlController } from '@/presentation/controllers'
 import { InvalidParamError } from '@/presentation/errors'
-import { RequiredFieldValidation, IUrlValidator } from '@/presentation/validation'
+import { RequiredFieldValidation } from '@/presentation/validation'
+import { CreateShortUrlSpy } from '@/tests/application/mocks'
 import { mockUrlOutput } from '@/tests/domain/mocks'
-
-class UrlValidatorSpy implements IUrlValidator {
-  output: boolean = true
-  input?: string
-  callsCount = 0
-
-  isValid (url: string): boolean {
-    this.input = url
-    this.callsCount++
-    return this.output
-  }
-}
-
-class CreateShortUrlSpy implements ICreateShortUrlUseCase {
-  input?: ICreateShortUrlUseCase.Input
-  callsCount = 0
-  output = mockUrlOutput()
-  async perform (input: ICreateShortUrlUseCase.Input): Promise<ICreateShortUrlUseCase.Output > {
-    this.input = input
-    this.callsCount++
-    return this.output
-  }
-}
+import { UrlValidatorSpy } from '@/tests/infrastructure/mocks'
 
 type SutTypes = {
   sut: CreateShortUrlController
   urlValidatorSpy: UrlValidatorSpy
   createShortUrlSpy: CreateShortUrlSpy
-
 }
 
 const makeSut = (): SutTypes => {
