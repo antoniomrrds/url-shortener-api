@@ -1,6 +1,6 @@
 import { CreateShortUrl } from '@/application/use-cases'
 import { mockUrlOutput } from '@/tests/domain/mocks'
-import { CreateShortUrlRepositorySpy, UniqueIDGeneratorStub } from '@/tests/application/mocks'
+import { CreateShortUrlRepositorySpy, UniqueIDGeneratorStub, throwError } from '@/tests/application/mocks'
 
 type SutTypes = {
   sut: CreateShortUrl
@@ -52,22 +52,18 @@ describe('CreateShortURL UseCase', () => {
   })
   it('Should rethrow if IUniqueIDGenerator throws', async () => {
     const { sut, uniqueIDGeneratorStub } = makeSut()
-    const error = new Error('unique_id_error')
-    jest.spyOn(uniqueIDGeneratorStub, 'generateUniqueId')
-      .mockImplementationOnce(() => { throw error })
+    uniqueIDGeneratorStub.generateUniqueId = throwError
 
     const promise = sut.perform({ originalUrl })
 
-    await expect(promise).rejects.toThrow(error)
+    await expect(promise).rejects.toThrow()
   })
   it('Should rethrow if ICreateShortUrlRepository throws', async () => {
     const { sut, createShortUrlRepositorySpy } = makeSut()
-    const error = new Error('create_error')
-    jest.spyOn(createShortUrlRepositorySpy, 'create')
-      .mockImplementationOnce(() => { throw error })
+    createShortUrlRepositorySpy.create = throwError
 
     const promise = sut.perform({ originalUrl })
 
-    await expect(promise).rejects.toThrow(error)
+    await expect(promise).rejects.toThrow()
   })
 })

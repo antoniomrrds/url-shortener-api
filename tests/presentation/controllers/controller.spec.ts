@@ -2,6 +2,7 @@ import { Controller } from '@/presentation/controllers'
 import { ServerError } from '@/presentation/errors'
 import { HttpResponse } from '@/presentation/ports'
 import { ValidationComposite } from '@/presentation/validation'
+import { throwError } from '@/tests/application/mocks'
 
 jest.mock('@/presentation/validation/validation-composite')
 
@@ -44,7 +45,7 @@ describe('Controller', () => {
   it('Should return 500 if perform throws', async () => {
     const error = new Error('perform_error')
     const { sut } = makeSut()
-    sut.perform = () => { throw error }
+    sut.perform = throwError
 
     const httpResponse = await sut.handleRequest(anyValue)
 
