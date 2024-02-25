@@ -34,6 +34,7 @@
     "@types/jest": "^29.5.12",
     "@types/module-alias": "^2.0.4",
     "@types/node": "^20.11.19",
+    "@types/validator": "^13.11.9",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "eslint": "^8.56.0",
     "eslint-config-standard-with-typescript": "^43.0.1",
@@ -54,6 +55,7 @@
     "nanoid": "^3.3.7",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.2.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "validator": "^13.11.0"
   }
 }

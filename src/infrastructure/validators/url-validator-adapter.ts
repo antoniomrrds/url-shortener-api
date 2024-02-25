@@ -1,7 +1,8 @@
 import { IUrlValidator } from '@/presentation/validation'
+import { isURL } from 'validator'
 
 export class UrlValidatorAdapter implements IUrlValidator {
   isValid (url: string): boolean {
-    return false
+    return isURL(url)
   }
 }
