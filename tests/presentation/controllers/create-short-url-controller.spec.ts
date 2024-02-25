@@ -1,10 +1,8 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
-import { CreateShortUrlController } from '@/presentation/controllers'
-import { InvalidParamError, ServerError } from '@/presentation/errors'
-import { RequiredFieldValidation, ValidationComposite } from '@/presentation/validation'
+import { Controller, CreateShortUrlController } from '@/presentation/controllers'
+import { InvalidParamError } from '@/presentation/errors'
+import { RequiredFieldValidation } from '@/presentation/validation'
 import { IUrlValidator } from '@/presentation/validation/ports'
-
-jest.mock('@/presentation/validation/validation-composite')
 
 class UrlValidatorSpy implements IUrlValidator {
   output: boolean = true
@@ -56,21 +54,19 @@ const makeSut = (): SutTypes => {
 describe('CreateShortUrlController', () => {
   const originalUrl = 'http://any-url.com'
 
-  it('Should return 400 if validation fails', async () => {
-    const error = new Error('validation_error')
+  it('Should extend Controller', () => {
     const { sut } = makeSut()
-    const validationCompositeSpy = ValidationComposite as jest.Mock
-    validationCompositeSpy.mockImplementationOnce(() => ({ validate: () => error }))
 
-    const httpResponse = await sut.handleRequest({ originalUrl })
+    expect(sut).toBeInstanceOf(Controller)
+  })
+  it('Should build Validators correctly', () => {
+    const { sut } = makeSut()
 
-    expect(ValidationComposite).toHaveBeenCalledWith([
+    const validators = sut.buildValidators({ originalUrl })
+
+    expect(validators).toEqual([
       new RequiredFieldValidation(originalUrl, 'originalUrl')
     ])
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      data: error
-    })
   })
   it('Should return 400 if the originalUrl field is not a URL', async () => {
     const { sut, urlValidatorSpy } = makeSut()
@@ -91,18 +87,6 @@ describe('CreateShortUrlController', () => {
     expect(urlValidatorSpy.input).toBe(originalUrl)
     expect(urlValidatorSpy.callsCount).toBe(1)
   })
-  it('Should return 500 if UrlValidator throws', async () => {
-    const error = new Error('url_validator_error')
-    const { sut, urlValidatorSpy } = makeSut()
-    urlValidatorSpy.isValid = () => { throw error }
-
-    const httpResponse = await sut.handleRequest({ originalUrl })
-
-    expect(httpResponse).toEqual({
-      statusCode: 500,
-      data: new ServerError(error)
-    })
-  })
   it('Should call CreateShortUrl with the correct value', async () => {
     const { sut, createShortUrlSpy } = makeSut()
 
@@ -110,18 +94,6 @@ describe('CreateShortUrlController', () => {
 
     expect(createShortUrlSpy.input).toEqual({ originalUrl })
     expect(createShortUrlSpy.callsCount).toBe(1)
-  })
-  it('Should return 500 if CreateShortUrl throws', async () => {
-    const error = new Error('perform_error')
-    const { sut, createShortUrlSpy } = makeSut()
-    createShortUrlSpy.perform = () => { throw new Error() }
-
-    const httpResponse = await sut.handleRequest({ originalUrl })
-
-    expect(httpResponse).toEqual({
-      statusCode: 500,
-      data: new ServerError(error)
-    })
   })
   it('Should return 201 and the data', async () => {
     const { sut } = makeSut()
