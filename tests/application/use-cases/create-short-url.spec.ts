@@ -1,29 +1,6 @@
 import { CreateShortUrl } from '@/application/use-cases'
-import { IUniqueIDGenerator } from '@/application/ports/crypto'
-import { ICreateShortUrlRepository } from '@/application/ports/repositories'
 import { mockUrlOutput } from '@/tests/domain/mocks'
-
-class UniqueIDGeneratorStub implements IUniqueIDGenerator {
-  output = 'any_unique_id'
-  callsCount = 0
-
-  generateUniqueId (): IUniqueIDGenerator.Output {
-    this.callsCount++
-    return this.output
-  }
-}
-
-class CreateShortUrlRepositorySpy implements ICreateShortUrlRepository {
-  input?: ICreateShortUrlRepository.Input
-  callsCount = 0
-  output = mockUrlOutput()
-
-  async create (input: ICreateShortUrlRepository.Input): Promise<ICreateShortUrlRepository.Output> {
-    this.callsCount++
-    this.input = input
-    return this.output
-  }
-}
+import { CreateShortUrlRepositorySpy, UniqueIDGeneratorStub } from '@/tests/application/mocks'
 
 type SutTypes = {
   sut: CreateShortUrl
@@ -35,7 +12,11 @@ const makeSut = (): SutTypes => {
   const createShortUrlRepositorySpy = new CreateShortUrlRepositorySpy()
   const uniqueIDGeneratorStub = new UniqueIDGeneratorStub()
   const sut = new CreateShortUrl(uniqueIDGeneratorStub, createShortUrlRepositorySpy)
-  return { sut, uniqueIDGeneratorStub, createShortUrlRepositorySpy }
+  return {
+    sut,
+    uniqueIDGeneratorStub,
+    createShortUrlRepositorySpy
+  }
 }
 
 describe('CreateShortURL UseCase', () => {
