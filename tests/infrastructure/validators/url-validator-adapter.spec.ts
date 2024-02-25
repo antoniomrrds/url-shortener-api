@@ -26,4 +26,11 @@ describe('UrlValidatorAdapter', () => {
 
     expect(isValid).toBe(true)
   })
+  it('Should call validator with correct value', () => {
+    const sut = new UrlValidatorAdapter()
+
+    sut.isValid('any_url')
+
+    expect(isValidatorSpy.isURL).toHaveBeenCalledWith('any_url')
+  })
 })
