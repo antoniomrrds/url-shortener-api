@@ -1,6 +1,7 @@
 import { CreateShortUrl } from '@/application/use-cases'
 import { IUniqueIDGenerator } from '@/application/ports/crypto'
 import { ICreateShortUrlRepository } from '@/application/ports/repositories'
+import { mockUrlOutput } from '@/tests/domain/mocks'
 
 class UniqueIDGeneratorStub implements IUniqueIDGenerator {
   output = 'any_unique_id'
@@ -15,12 +16,7 @@ class UniqueIDGeneratorStub implements IUniqueIDGenerator {
 class CreateShortUrlRepositorySpy implements ICreateShortUrlRepository {
   input?: ICreateShortUrlRepository.Input
   callsCount = 0
-  output = {
-    id: 'any_id',
-    shortUrl: 'any_unique_id',
-    originalUrl: 'any_url',
-    accessCounter: 0
-  }
+  output = mockUrlOutput()
 
   async create (input: ICreateShortUrlRepository.Input): Promise<ICreateShortUrlRepository.Output> {
     this.callsCount++
@@ -71,12 +67,7 @@ describe('CreateShortURL UseCase', () => {
 
     const data = await sut.perform({ originalUrl })
 
-    expect(data).toEqual({
-      id: 'any_id',
-      shortUrl,
-      originalUrl,
-      accessCounter: 0
-    })
+    expect(data).toEqual(mockUrlOutput())
   })
   it('Should rethrow if IUniqueIDGenerator throws', async () => {
     const { sut, uniqueIDGeneratorStub } = makeSut()

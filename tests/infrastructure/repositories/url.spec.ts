@@ -3,6 +3,7 @@ import { InMemoryDatabase } from '@/tests/infrastructure/typeorm/mocks'
 
 import { PgUrl } from '@/infrastructure/typeorm/entities'
 import { DataSource } from 'typeorm'
+import { mockUrlRepositoryInput, mockUrlRepositoryOutput } from '@/tests/infrastructure/mocks'
 
 describe('PgUrlRepository', () => {
   let connection: DataSource
@@ -22,17 +23,8 @@ describe('PgUrlRepository', () => {
   it('Should successfully create a short URL', async () => {
     const sut = new PgUrlRepository(connection)
 
-    const createdShortUrl = await sut.create({
-      shortUrl: 'any_short_url',
-      originalUrl: 'any_original_url',
-      accessCounter: 0
-    })
+    const createdShortUrl = await sut.create(mockUrlRepositoryInput())
 
-    expect(createdShortUrl).toMatchObject({
-      id: '1',
-      shortUrl: 'any_short_url',
-      originalUrl: 'any_original_url',
-      accessCounter: 0
-    })
+    expect(createdShortUrl).toMatchObject(mockUrlRepositoryOutput())
   })
 })

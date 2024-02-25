@@ -1,8 +1,8 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { Controller, CreateShortUrlController } from '@/presentation/controllers'
 import { InvalidParamError } from '@/presentation/errors'
-import { RequiredFieldValidation } from '@/presentation/validation'
-import { IUrlValidator } from '@/presentation/validation/ports'
+import { RequiredFieldValidation, IUrlValidator } from '@/presentation/validation'
+import { mockUrlOutput } from '@/tests/domain/mocks'
 
 class UrlValidatorSpy implements IUrlValidator {
   output: boolean = true
@@ -19,13 +19,7 @@ class UrlValidatorSpy implements IUrlValidator {
 class CreateShortUrlSpy implements ICreateShortUrlUseCase {
   input?: ICreateShortUrlUseCase.Input
   callsCount = 0
-  output = {
-    id: 'any_id',
-    shortUrl: 'any_unique_id',
-    originalUrl: 'any_url',
-    accessCounter: 0
-  }
-
+  output = mockUrlOutput()
   async perform (input: ICreateShortUrlUseCase.Input): Promise<ICreateShortUrlUseCase.Output > {
     this.input = input
     this.callsCount++
@@ -102,12 +96,7 @@ describe('CreateShortUrlController', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 201,
-      data: {
-        id: 'any_id',
-        shortUrl: 'any_unique_id',
-        originalUrl: 'any_url',
-        accessCounter: 0
-      }
+      data: mockUrlOutput()
     })
   })
 })
