@@ -1,21 +1,9 @@
-import { Controller } from '@/presentation/controllers'
 import { ServerError } from '@/presentation/errors'
-import { HttpResponse } from '@/presentation/ports'
 import { ValidationComposite } from '@/presentation/validation'
 import { throwError } from '@/tests/application/mocks'
+import { ControllerStub } from '@/tests/presentation/mocks'
 
 jest.mock('@/presentation/validation/validation-composite')
-
-class ControllerStub extends Controller {
-  output: HttpResponse = {
-    statusCode: 200,
-    data: 'any_data'
-  }
-
-  async perform (httpRequest: any): Promise<HttpResponse> {
-    return this.output
-  }
-}
 
 type SutTypes = {
   sut: ControllerStub
