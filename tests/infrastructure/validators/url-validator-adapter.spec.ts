@@ -1,15 +1,29 @@
 import { UrlValidatorAdapter } from '@/infrastructure/validators'
+import validator from 'validator'
+
+jest.mock('validator')
 
 describe('UrlValidatorAdapter', () => {
-  const testCases = [
-    { name: 'false', expected: false, value: 'invalid_url' }
-  ]
+  let isValidatorSpy: jest.Mocked<typeof validator>
 
-  it.each(testCases)('Should return $name if validator returns $name', ({ expected, value }) => {
+  beforeAll(() => {
+    isValidatorSpy = validator as jest.Mocked<typeof validator>
+    isValidatorSpy.isURL.mockReturnValue(true)
+  })
+
+  it('Should return false if validator returns false', () => {
+    isValidatorSpy.isURL.mockReturnValueOnce(false)
     const sut = new UrlValidatorAdapter()
 
-    const isValid = sut.isValid(value)
+    const isValid = sut.isValid('invalid_url')
 
-    expect(isValid).toBe(expected)
+    expect(isValid).toBe(false)
+  })
+  it('Should return true if validator returns true', () => {
+    const sut = new UrlValidatorAdapter()
+
+    const isValid = sut.isValid('valid_url')
+
+    expect(isValid).toBe(true)
   })
 })
