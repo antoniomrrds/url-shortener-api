@@ -2,11 +2,11 @@ import { RequiredFieldValidation, ValidationBuilder } from '@/presentation/valid
 
 describe('ValidationBuilder', () => {
   it('Should return a RequiredFieldValidation', () => {
-    const validators = ValidationBuilder
+    const validations = ValidationBuilder
       .of({ value: 'any_value', fieldName: 'any_name' })
       .required()
       .build()
 
-    expect(validators).toEqual([new RequiredFieldValidation('any_value', 'any_name')])
+    expect(validations).toEqual([new RequiredFieldValidation('any_value', 'any_name')])
   })
 })

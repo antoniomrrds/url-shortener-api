@@ -9,7 +9,7 @@ export class ValidationBuilder {
   private constructor (
     private readonly value: string,
     private readonly fieldName: string,
-    private readonly validators: IValidation[] = []
+    private readonly validations: IValidation[] = []
   ) {}
 
   static of ({ value, fieldName }: ValidationBuilderType): ValidationBuilder {
@@ -17,11 +17,11 @@ export class ValidationBuilder {
   }
 
   required (): this {
-    this.validators.push(new RequiredFieldValidation(this.value, this.fieldName))
+    this.validations.push(new RequiredFieldValidation(this.value, this.fieldName))
     return this
   }
 
   build (): IValidation[] {
-    return this.validators
+    return this.validations
   }
 }
