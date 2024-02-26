@@ -1,10 +1,23 @@
 import { UrlValidation } from '@/presentation/validation'
 import { UrlValidatorSpy } from '@/tests/infrastructure/mocks'
 
+type SutTypes = {
+  sut: UrlValidation
+  urlValidatorSpy: UrlValidatorSpy
+}
+
+const makeSut = (): SutTypes => {
+  const urlValidatorSpy = new UrlValidatorSpy()
+  const sut = new UrlValidation('any_value', urlValidatorSpy)
+  return {
+    sut,
+    urlValidatorSpy
+  }
+}
+
 describe('UrlValidation', () => {
-  it(' Should call urlValidator with the correct value', () => {
-    const urlValidatorSpy = new UrlValidatorSpy()
-    const sut = new UrlValidation('any_value', urlValidatorSpy)
+  it('Should call urlValidator with the correct value', () => {
+    const { sut, urlValidatorSpy } = makeSut()
 
     sut.validate()
 
