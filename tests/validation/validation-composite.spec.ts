@@ -1,6 +1,6 @@
-import { ValidationComposite, IValidator } from '@/presentation/validation'
+import { ValidationComposite, IValidation } from '@/presentation/validation'
 
-class ValidatorSpy implements IValidator {
+class ValidatorSpy implements IValidation {
   error?: Error = undefined
   validate (): undefined | Error {
     return this.error
@@ -13,7 +13,7 @@ type SutTypes = {
 }
 
 const makeSut = (): SutTypes => {
-  const validators: IValidator[] = []
+  const validators: IValidation[] = []
   const validatorSpy1 = new ValidatorSpy()
   const validatorSpy2 = new ValidatorSpy()
   validators.push(validatorSpy1, validatorSpy2)
