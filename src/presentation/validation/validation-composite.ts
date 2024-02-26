@@ -1,7 +1,7 @@
-import { IValidator } from '@/presentation/validation/ports'
+import { IValidation } from '@/presentation/validation/ports'
 
-export class ValidationComposite implements IValidator {
-  constructor (private readonly validators: IValidator[]) {}
+export class ValidationComposite implements IValidation {
+  constructor (private readonly validators: IValidation[]) {}
 
   validate (): Error | undefined {
     return this.validators

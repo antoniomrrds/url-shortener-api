@@ -1,4 +1,4 @@
-import { IValidator, RequiredFieldValidation } from '@/presentation/validation'
+import { IValidation, RequiredFieldValidation } from '@/presentation/validation'
 
 type ValidationBuilderType = {
   value: string
@@ -9,7 +9,7 @@ export class ValidationBuilder {
   private constructor (
     private readonly value: string,
     private readonly fieldName: string,
-    private readonly validators: IValidator[] = []
+    private readonly validators: IValidation[] = []
   ) {}
 
   static of ({ value, fieldName }: ValidationBuilderType): ValidationBuilder {
@@ -21,7 +21,7 @@ export class ValidationBuilder {
     return this
   }
 
-  build (): IValidator[] {
+  build (): IValidation[] {
     return this.validators
   }
 }

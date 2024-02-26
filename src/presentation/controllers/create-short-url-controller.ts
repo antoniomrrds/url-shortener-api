@@ -1,7 +1,7 @@
 import { ICreateShortUrlUseCase } from '@/domain/use-cases'
 import { InvalidParamError } from '@/presentation/errors'
 import { badRequest, created } from '@/presentation/helpers'
-import { IUrlValidator, ValidationBuilder as Builder, IValidator } from '@/presentation/validation'
+import { IUrlValidator, ValidationBuilder as Builder, IValidation } from '@/presentation/validation'
 import { HttpResponse } from '@/presentation/ports'
 import { Controller } from '@/presentation/controllers'
 
@@ -33,7 +33,7 @@ export class CreateShortUrlController extends Controller<CreateShortUrlRequest, 
     return created(result)
   }
 
-  override buildValidators ({ originalUrl }: CreateShortUrlRequest): IValidator[] {
+  override buildValidators ({ originalUrl }: CreateShortUrlRequest): IValidation[] {
     return [
       ...Builder.of({ value: originalUrl, fieldName: 'originalUrl' }).required().build()
     ]
