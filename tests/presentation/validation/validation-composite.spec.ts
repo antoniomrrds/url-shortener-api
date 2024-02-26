@@ -1,11 +1,5 @@
 import { ValidationComposite, IValidation } from '@/presentation/validation'
-
-class ValidationSpy implements IValidation {
-  error?: Error = undefined
-  validate (): undefined | Error {
-    return this.error
-  }
-}
+import { ValidationSpy } from '@/tests/presentation/mocks'
 
 type SutTypes = {
   sut: ValidationComposite
