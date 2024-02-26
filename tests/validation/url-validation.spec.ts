@@ -1,3 +1,4 @@
+import { InvalidParamError } from '@/presentation/errors'
 import { UrlValidation } from '@/presentation/validation'
 import { UrlValidatorSpy } from '@/tests/infrastructure/mocks'
 
@@ -8,7 +9,7 @@ type SutTypes = {
 
 const makeSut = (): SutTypes => {
   const urlValidatorSpy = new UrlValidatorSpy()
-  const sut = new UrlValidation('any_value', urlValidatorSpy)
+  const sut = new UrlValidation('any_value', 'any_field', urlValidatorSpy)
   return {
     sut,
     urlValidatorSpy
@@ -23,5 +24,13 @@ describe('UrlValidation', () => {
 
     expect(urlValidatorSpy.input).toBe('any_value')
     expect(urlValidatorSpy.callsCount).toBe(1)
+  })
+  it('Should return InvalidParamError if urlValidator returns false', () => {
+    const { sut, urlValidatorSpy } = makeSut()
+    urlValidatorSpy.output = false
+
+    const error = sut.validate()
+
+    expect(error).toEqual(new InvalidParamError('any_field'))
   })
 })
