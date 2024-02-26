@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-throw-literal */
 import { ServerError } from '@/presentation/errors'
 import { ValidationComposite } from '@/presentation/validation'
 import { throwError } from '@/tests/application/mocks'
@@ -48,5 +49,17 @@ describe('Controller', () => {
     const httpResponse = await sut.handleRequest(anyValue)
 
     expect(httpResponse).toEqual(sut.output)
+  })
+
+  it('Should returns a ServerError response with "Server failed. Try again soon" when the error is undefined or not an error', async () => {
+    const { sut } = makeSut()
+    sut.perform = () => { throw 'any_error' }
+
+    const httpResponse = await sut.handleRequest(anyValue)
+
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      data: new ServerError()
+    })
   })
 })
