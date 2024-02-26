@@ -1,4 +1,5 @@
-import { IValidation, RequiredFieldValidation } from '@/presentation/validation'
+import { UrlValidatorAdapter } from '@/infrastructure/validators'
+import { IValidation, RequiredFieldValidation, UrlValidation } from '@/presentation/validation'
 
 type ValidationBuilderType = {
   value: string
@@ -18,6 +19,11 @@ export class ValidationBuilder {
 
   required (): this {
     this.validations.push(new RequiredFieldValidation(this.value, this.fieldName))
+    return this
+  }
+
+  url (): this {
+    this.validations.push(new UrlValidation(this.value, this.fieldName, new UrlValidatorAdapter()))
     return this
   }
 
