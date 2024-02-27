@@ -33,4 +33,11 @@ describe('UrlValidation', () => {
 
     expect(error).toEqual(new InvalidParamError('any_field'))
   })
+  it('Should return undefined if urlValidator returns true', () => {
+    const { sut } = makeSut()
+
+    const error = sut.validate()
+
+    expect(error).toBeUndefined()
+  })
 })
