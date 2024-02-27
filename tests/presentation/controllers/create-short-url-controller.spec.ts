@@ -1,23 +1,19 @@
+import { UrlValidatorAdapter } from '@/infrastructure/validators'
 import { Controller, CreateShortUrlController } from '@/presentation/controllers'
-import { InvalidParamError } from '@/presentation/errors'
-import { RequiredFieldValidation } from '@/presentation/validation'
+import { RequiredFieldValidation, UrlValidation } from '@/presentation/validation'
 import { CreateShortUrlSpy } from '@/tests/application/mocks'
 import { mockUrlOutput } from '@/tests/domain/mocks'
-import { UrlValidatorSpy } from '@/tests/infrastructure/mocks'
 
 type SutTypes = {
   sut: CreateShortUrlController
-  urlValidatorSpy: UrlValidatorSpy
   createShortUrlSpy: CreateShortUrlSpy
 }
 
 const makeSut = (): SutTypes => {
   const createShortUrlSpy = new CreateShortUrlSpy()
-  const urlValidatorSpy = new UrlValidatorSpy()
-  const sut = new CreateShortUrlController(urlValidatorSpy, createShortUrlSpy)
+  const sut = new CreateShortUrlController(createShortUrlSpy)
   return {
     sut,
-    urlValidatorSpy,
     createShortUrlSpy
   }
 }
@@ -36,27 +32,9 @@ describe('CreateShortUrlController', () => {
     const validators = sut.buildValidators({ originalUrl })
 
     expect(validators).toEqual([
-      new RequiredFieldValidation(originalUrl, 'originalUrl')
+      new RequiredFieldValidation(originalUrl, 'originalUrl'),
+      new UrlValidation(originalUrl, 'originalUrl', new UrlValidatorAdapter())
     ])
-  })
-  it('Should return 400 if the originalUrl field is not a URL', async () => {
-    const { sut, urlValidatorSpy } = makeSut()
-    urlValidatorSpy.output = false
-
-    const httpResponse = await sut.handleRequest({ originalUrl: 'invalid_url' })
-
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      data: new InvalidParamError('originalUrl')
-    })
-  })
-  it('Should call UrlValidator with the correct url', async () => {
-    const { sut, urlValidatorSpy } = makeSut()
-
-    await sut.handleRequest({ originalUrl })
-
-    expect(urlValidatorSpy.input).toBe(originalUrl)
-    expect(urlValidatorSpy.callsCount).toBe(1)
   })
   it('Should call CreateShortUrl with the correct value', async () => {
     const { sut, createShortUrlSpy } = makeSut()
