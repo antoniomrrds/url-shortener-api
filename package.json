@@ -4,6 +4,7 @@
   "description": "Rest Node.js API using TDD, clean architecture, and Typescript.",
   "main": "index.js",
   "scripts": {
+    "start": "node dist/main/server.js",
     "clean": "npm prune",
     "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.build.json",
