@@ -17,4 +17,15 @@ describe('ExpressRouteAdapter', () => {
 
     expect(controllerSpy.handleRequest).toHaveBeenCalledWith({ anyBody: 'any_body' })
   })
+  it('Should call handleRequest with empty request', async () => {
+    const req = getMockReq()
+    const { res } = getMockRes()
+    const controllerSpy = new (ControllerStub as jest.MockedClass<typeof ControllerStub>)()
+
+    const sut = new ExpressRouteAdapter(controllerSpy)
+
+    await sut.adapt(req, res)
+
+    expect(controllerSpy.handleRequest).toHaveBeenCalledWith({})
+  })
 })
