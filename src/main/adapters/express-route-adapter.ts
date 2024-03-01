@@ -7,10 +7,7 @@ export class ExpressRouteAdapter {
 
   async adapt (req: Request, res: Response): Promise<void> {
     const { statusCode, data } = await this.controller.handleRequest({ ...req.body })
-    if (statusCode === 201) {
-      res.status(statusCode).json(data)
-    } else {
-      res.status(statusCode).json({ error: data.message })
-    }
+    const json = statusCode === 201 ? data : { error: data.message }
+    res.status(statusCode).json(json)
   }
 }
