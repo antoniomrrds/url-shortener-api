@@ -41,7 +41,7 @@ describe('ExpressRouteAdapter', () => {
     expect(controllerSpy.handleRequest).toHaveBeenCalledWith({})
     expect(controllerSpy.handleRequest).toHaveBeenCalledTimes(1)
   })
-  it('Should return 201 if handleRequest returns a value', async () => {
+  it('Should respond with 201 and the correctly data', async () => {
     const { sut, req, res } = makeSut()
 
     await sut.adapt(req, res)
@@ -49,6 +49,20 @@ describe('ExpressRouteAdapter', () => {
     expect(res.status).toHaveBeenCalledWith(201)
     expect(res.status).toHaveBeenCalledTimes(1)
     expect(res.json).toHaveBeenCalledWith({ anyData: 'any_data' })
+    expect(res.json).toHaveBeenCalledTimes(1)
+  })
+  it('Should respond with 400 and the correctly error', async () => {
+    const { sut, req, res, controllerSpy } = makeSut()
+    controllerSpy.handleRequest.mockResolvedValueOnce({
+      statusCode: 400,
+      data: new Error('any_error')
+    })
+
+    await sut.adapt(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.status).toHaveBeenCalledTimes(1)
+    expect(res.json).toHaveBeenCalledWith({ error: 'any_error' })
     expect(res.json).toHaveBeenCalledTimes(1)
   })
 })
