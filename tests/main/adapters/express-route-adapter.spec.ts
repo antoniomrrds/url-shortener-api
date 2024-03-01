@@ -14,11 +14,14 @@ type SutTypes = {
   controllerSpy: jest.Mocked<ControllerStub>
 }
 
+const anyData = 'any_data'
+const error = 'any_error'
+
 const makeSut = (): SutTypes => {
-  const req = getMockReq({ body: { anyData: 'any_data' } })
+  const req = getMockReq({ body: { anyData } })
   const { res } = getMockRes()
   const controllerSpy = new ControllerStub() as jest.Mocked<ControllerStub>
-  controllerSpy.handleRequest.mockResolvedValue({ statusCode: 201, data: { anyData: 'any_data' } })
+  controllerSpy.handleRequest.mockResolvedValue({ statusCode: 201, data: { anyData } })
   const sut = new ExpressRouteAdapter(controllerSpy)
 
   return { sut, req, res, controllerSpy }
@@ -29,7 +32,7 @@ describe('ExpressRouteAdapter', () => {
     const { sut, req, res, controllerSpy } = makeSut()
     await sut.adapt(req, res)
 
-    expect(controllerSpy.handleRequest).toHaveBeenCalledWith({ anyData: 'any_data' })
+    expect(controllerSpy.handleRequest).toHaveBeenCalledWith({ anyData })
     expect(controllerSpy.handleRequest).toHaveBeenCalledTimes(1)
   })
   it('Should call handleRequest with empty request', async () => {
@@ -48,7 +51,7 @@ describe('ExpressRouteAdapter', () => {
 
     expect(res.status).toHaveBeenCalledWith(201)
     expect(res.status).toHaveBeenCalledTimes(1)
-    expect(res.json).toHaveBeenCalledWith({ anyData: 'any_data' })
+    expect(res.json).toHaveBeenCalledWith({ anyData })
     expect(res.json).toHaveBeenCalledTimes(1)
   })
   it('Should respond with 400 and the correctly error', async () => {
@@ -62,7 +65,7 @@ describe('ExpressRouteAdapter', () => {
 
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.status).toHaveBeenCalledTimes(1)
-    expect(res.json).toHaveBeenCalledWith({ error: 'any_error' })
+    expect(res.json).toHaveBeenCalledWith({ error })
     expect(res.json).toHaveBeenCalledTimes(1)
   })
   it('Should respond with 500 and the correctly error', async () => {
@@ -76,7 +79,7 @@ describe('ExpressRouteAdapter', () => {
 
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.status).toHaveBeenCalledTimes(1)
-    expect(res.json).toHaveBeenCalledWith({ error: 'any_error' })
+    expect(res.json).toHaveBeenCalledWith({ error })
     expect(res.json).toHaveBeenCalledTimes(1)
   })
 })
