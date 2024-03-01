@@ -2,7 +2,7 @@ import { badRequest, serverError } from '@/presentation/helpers'
 import { HttpResponse } from '@/presentation/ports'
 import { ValidationComposite, IValidation } from '@/presentation/validation'
 
-export abstract class Controller<Request = unknown, Response = unknown > {
+export abstract class Controller<Request = any, Response = any > {
   abstract perform (httpRequest: Request): Promise<HttpResponse<Response>>
   buildValidators (httpRequest: Request): IValidation[] {
     return []
