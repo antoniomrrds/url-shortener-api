@@ -6,11 +6,11 @@ export class ExpressRouteAdapter {
   constructor (private readonly controller: Controller) {}
 
   async adapt (req: Request, res: Response): Promise<void> {
-    const HttpResponse = await this.controller.handleRequest({ ...req.body })
-    if (HttpResponse.statusCode === 201) {
-      res.status(201).json(HttpResponse.data)
+    const { statusCode, data } = await this.controller.handleRequest({ ...req.body })
+    if (statusCode === 201) {
+      res.status(statusCode).json(data)
     } else {
-      res.status(400).json({ error: HttpResponse.data.message })
+      res.status(statusCode).json({ error: data.message })
     }
   }
 }
