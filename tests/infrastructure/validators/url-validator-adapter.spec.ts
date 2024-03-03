@@ -1,4 +1,5 @@
 import { UrlValidatorAdapter } from '@/infrastructure/validators'
+import { throwError } from '@/tests/application/mocks'
 import validator from 'validator'
 
 jest.mock('validator')
@@ -36,5 +37,13 @@ describe('UrlValidatorAdapter', () => {
     sut.isValid('any_url')
 
     expect(isValidatorSpy.isURL).toHaveBeenCalledWith('any_url')
+  })
+  it('Should return false if the validator throws an error', () => {
+    isValidatorSpy.isURL.mockImplementationOnce(throwError)
+    const sut = makeSut()
+
+    const isValid = sut.isValid('invalid_url')
+
+    expect(isValid).toBe(false)
   })
 })
