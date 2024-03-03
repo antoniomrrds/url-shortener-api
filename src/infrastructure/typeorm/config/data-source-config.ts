@@ -9,7 +9,7 @@ const pgDataSourceOptions: DataSourceOptions = {
   password: DB.password,
   database: DB.database
 }
-export const dataSourceOptions: DataSourceOptions = {
+const dataSourceOptions: DataSourceOptions = {
   ...pgDataSourceOptions,
   entities: [
     'dist/infrastructure/repositories/postgres/entities/**/*{.ts,.js}'

@@ -5,3 +5,7 @@ export const DB = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE
 }
+
+export const { portServer } = {
+  portServer: process.env.PORT ?? 3000
+}
