@@ -16,7 +16,12 @@
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage",
     "test:ci:silent": "npm test -- --coverage --silent",
-    "prepare": "husky"
+    "prepare": "husky",
+    "docker:down": "docker-compose down",
+    "docker:up": "docker-compose up -d",
+    "docker:restart": "npm run docker:down && npm run docker:up",
+    "docker:dropAll": "docker stop $(docker ps -a -q) && docker system prune -f",
+    "docker:dropAll:images": "docker rmi $(docker images -a -q)"
   },
   "keywords": [
     "clean architecture",

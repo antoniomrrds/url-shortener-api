@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  psql_url-shortener:
+    container_name: psql_url-shortener
+    hostname: psql_url-shortener
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test123
+      POSTGRES_DB: db_url-shortener
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ~/.PostgressData/postgresonly/psql_url-shortener:/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
