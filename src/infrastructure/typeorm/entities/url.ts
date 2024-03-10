@@ -1,16 +1,22 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
-@Entity()
+@Entity({ name: 'tbl_shortened_url' })
 export class PgUrl {
   @PrimaryGeneratedColumn()
     id!: number
 
-  @Column()
+  @Column({ name: 'original_url' })
     originalUrl!: string
 
-  @Column()
+  @Column({ name: 'short_url' })
     shortUrl!: string
 
-  @Column()
+  @Column({ name: 'access_counter' })
     accessCounter!: number
+
+  @CreateDateColumn()
+    created_at!: Date
+
+  @UpdateDateColumn()
+    updated_at!: Date
 }

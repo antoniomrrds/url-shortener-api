@@ -4,7 +4,8 @@ module.exports = {
     '<rootDir>/src/**/*.ts',
     '!<rootDir>/src/main/**',
     '!**/ports/**',
-    '!<rootDir>/src/**/(index|*-config).ts'
+    '!<rootDir>/src/**/(index|*-config).ts',
+    '!<rootDir>/src/**/migrations/**'
   ],
   coverageDirectory: 'coverage',
   testEnvironment: 'node',

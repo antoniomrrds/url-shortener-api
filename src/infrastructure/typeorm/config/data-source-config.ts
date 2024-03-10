@@ -9,12 +9,17 @@ const pgDataSourceOptions: DataSourceOptions = {
   password: DB.password,
   database: DB.database
 }
-const dataSourceOptions: DataSourceOptions = {
+
+export const dataSourceOptions: DataSourceOptions = {
   ...pgDataSourceOptions,
   entities: [
-    'dist/infrastructure/repositories/postgres/entities/**/*{.ts,.js}'
+    `${process.env.TS_NODE_DEV ? 'src' : 'dist'}/infrastructure/typeorm/entities/**/*{.ts,.js}`
   ],
-  synchronize: true
+  migrations: [
+    `${process.env.TS_NODE_DEV ? 'src' : 'dist'}/typeorm/migrations/**/*{.ts,.js}`
+  ],
+  synchronize: false
+
 }
 
 export const PgDataSource = new DataSource(dataSourceOptions)
